@@ -18,6 +18,12 @@ import tensorflow as tf
 from numpy import moveaxis
 
 def pred(model_dir, spectro_dir, output_dir) : 
+    """Event class prediction
+        model_dir : str, path of the input trained model 
+        spectro_dir : str, path of the input spectrograms 
+        output_dir : str, path of the output file
+        
+    """
 
     csvPr_sta = open(os.path.join(output_dir,'prediction_station_level.csv'), 'w')          
     predict_sta = csv.writer(csvPr_sta, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -103,14 +109,19 @@ def pred(model_dir, spectro_dir, output_dir) :
 
 
 def valid(model_dir, spectro_dir, output_dir, event_label) : 
-    
+    """Event class validation
+        model_dir : str, input trained model 
+        spectro_dir : str, path of the input spectrograms 
+        output_dir : str, path of the output file
+        event_label : list, class of events to validate
+    """
 
     csvPr_sta = open(os.path.join(output_dir,'validation_station_level.csv'), 'w')          
     predict_sta = csv.writer(csvPr_sta, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
     predict_sta.writerow(['file_name', 
                                  'station',
-                                 'prob_seis',
-                                 'prob_art',
+                                 'prob_nat',
+                                 'prob_ant',
                                  'pred',
                                  'nature',
                                      ])  
@@ -120,8 +131,8 @@ def valid(model_dir, spectro_dir, output_dir, event_label) :
     predict_net = csv.writer(csvPr_net, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
     predict_net.writerow(['event', 
                                 'label_cat',
-                                 'prob_seis',
-                                 'prob_art',
+                                 'prob_nat',
+                                 'prob_ant',
                                  'pred',
                                  'nature'])  
 

@@ -58,9 +58,7 @@ def main(args):
 
     if args.mode == "valid":
         events = np.genfromtxt(f'{args.csv_dir}', delimiter=',', skip_header = 1, dtype=str)
-        print(events)
         data = spectro_extract_valid(data_dir=args.data_dir, events_list=events)
-        
         valid(model_dir=args.model_dir, spectro_dir='./spectro_demo', output_dir=args.output_dir, event_label=events)
 
     

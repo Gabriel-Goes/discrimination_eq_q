@@ -12,7 +12,8 @@ import os
 from obspy.signal.invsim import cosine_taper
 
 def fft_taper(data: np.ndarray) -> np.ndarray:
-
+    """Taper signal
+    """
     data *= cosine_taper(npts=len(data),
                          p=0.2)
 
@@ -20,6 +21,14 @@ def fft_taper(data: np.ndarray) -> np.ndarray:
 
 
 def get_fft(trace, WINDOW_LENGTH, OVERLAP, nb_pts) : 
+    """Fourier Transform function
+
+        trace : op.Stream()
+        WINDOW_LENGTH : int, length (in sec) of the sliding windows
+        OVERLAP : float, length of the overlap between each shift
+        np_pts : int, number of points in a window (sampling_rate * WINDOWS_LENGTH)
+        
+    """
     s_rate = trace.stats.sampling_rate
     
     #np_pts = 512
@@ -50,14 +59,18 @@ def get_fft(trace, WINDOW_LENGTH, OVERLAP, nb_pts) :
 
 
 def spectro_extract_valid(data_dir, events_list) : 
+    """Spectrogramm extraction for the valid mode
+    
+        data_dir : str, path of the input mseed
+        events_list : list, list of all the events to be validate with their labels
+       
+    """
     WINDOW_LENGTH = 1
     OVERLAP = (1-0.75)  
-    #events = glob.glob(f'{data_dir}/*')
     
     print('Number of events :', len(events_list))
     nb_evt = 0
-    for a in range(len(events_list)) : 
-   # for evt in events : 
+    for a in range(len(events_list)) :  
         nb_evt +=1
         print('*****************')
         print('EVENT', nb_evt , '/', len(events_list))
@@ -130,6 +143,11 @@ def spectro_extract_valid(data_dir, events_list) :
 
 
 def spectro_extract_pred(data_dir) : 
+    """Spectrogramm extraction for the prediction mode
+    
+        data_dir : str, path of the input mseed
+        
+    """
     WINDOW_LENGTH = 1
     OVERLAP = (1-0.75)  
     events = glob.glob(f'{data_dir}/*')
@@ -137,7 +155,6 @@ def spectro_extract_pred(data_dir) :
     print('Number of events :', len(events))
     nb_evt = 0
     for a in range(len(events)) : 
-   # for evt in events : 
         nb_evt +=1
         print('*****************')
         print('EVENT', nb_evt , '/', len(events))
