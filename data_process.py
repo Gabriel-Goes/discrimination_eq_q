@@ -87,7 +87,6 @@ def spectro_extract_valid(data_dir, events_list) :
             nb_st +=1
             print('Stream', nb_st , '/', len(list_stream), end = "\r")
             st = op.read(stream,  dtype=np.dtype(float))
-            
             stream_name = (stream.split('/')[3]).split('.mseed')[0]
 
             st.detrend('demean')

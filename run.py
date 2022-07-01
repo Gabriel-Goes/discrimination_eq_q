@@ -30,7 +30,7 @@ def read_args():
                       help="Model file directory")
 
     parser.add_argument("--data_dir",
-                      default="./mseed_demo/",
+                      default="./mseed_demo",
                       help="Input mseed file directory")
 
     parser.add_argument("--csv_dir",
@@ -38,7 +38,7 @@ def read_args():
                       help="If mode valid : Input csv file directory")
 
     parser.add_argument("--output_dir",
-                      default='./output/',
+                      default='./output_demo',
                       help="Output directory")
 
     parser.add_argument("--save_spec",
