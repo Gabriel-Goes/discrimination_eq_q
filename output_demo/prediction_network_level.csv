@@ -1,0 +1,5 @@
+event,prob_nat,prob_ant,pred,nature
+2020155T130003,0.069,0.931,1,Anthropogenic
+2020014T110909,0.186,0.814,1,Anthropogenic
+2020192T124937,0.683,0.317,0,Natural
+2021065T180743,0.217,0.783,1,Anthropogenic
