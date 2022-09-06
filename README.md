@@ -31,7 +31,6 @@ The algorithm supports the mseed data format.
 ```
  run run.py --mode pred --data_dir ./mseed_demo --output_dir ./output_demo --spectro_dir ./spectro_demo
 ```
-<<<<<<< HEAD
 
 Output files are automatically saved in "output_demo". 
 The algorithm produces two output files: "prediction_network_level.csv" and "prediction_station_level.csv". 
