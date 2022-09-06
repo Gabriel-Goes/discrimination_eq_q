@@ -120,6 +120,7 @@ def valid(model_dir, spectro_dir, output_dir, event_label) :
     predict_sta = csv.writer(csvPr_sta, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
     predict_sta.writerow(['file_name', 
                                  'station',
+                                 'label_cat',
                                  'prob_nat',
                                  'prob_ant',
                                  'pred',
@@ -178,8 +179,8 @@ def valid(model_dir, spectro_dir, output_dir, event_label) :
                 pred_final = 'Anthropogenic'
 
             predict_sta.writerow([file_name, 
-                                         class_,
                                          station,
+                                         class_,
                                          model_output[0][0], 
                                          model_output[0][1],
                                          pred[0],
