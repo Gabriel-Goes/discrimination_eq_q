@@ -1,8 +1,28 @@
 #  New CNN based tool to discriminate anthropogenic from natural low magnitude seismic events
 
+## Install miniconda and requirements
 
+* Download this repository : 
 
-## Related Paper 
+```
+git clone ...
+cd ...
+```
+
+* Install to default environment : 
+
+```
+conda env update -f=env.yml -n base
+```
+
+* Install to "discrim" virtual envirionment
+
+```
+conda env create -f env.yml
+conda activate discrim
+```
+
+## Reference
 
 C, Hourcade; M, Bonnin; E, Beucler (2022) "New CNN based tool to discriminate anthropogenic from natural low magnitude seismic events" Submitted - Journal Geophysical International
 
@@ -29,7 +49,7 @@ The algorithm supports the mseed data format.
 
 -  mseed format 
 ```
- run run.py --mode pred --data_dir ./mseed_demo --output_dir ./output_demo --spectro_dir ./spectro_demo
+ python run.py --mode pred --data_dir ./mseed_demo --output_dir ./output_demo
 ```
 
 Output files are automatically saved in "output_demo". 
@@ -67,7 +87,7 @@ The algorithm supports the mseed data format.
 
 -  mseed format 
 ```
- run run.py --mode valid --csv_file ./demo_file.csv --data_dir ./mseed_demo --output_dir ./output_demo --spectro_dir ./spectro_demo
+ python run.py --mode valid --csv_file ./demo_file.csv --data_dir ./mseed_demo --output_dir ./output_demo 
 ```
 
 Output files are automatically saved in "output_demo". 

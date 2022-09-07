@@ -1,17 +1,6 @@
 
 import numpy as np
-import tensorflow as tf
-from tensorflow import keras
 import argparse
-import os
-
-import obspy as op
-from obspy.clients.fdsn import Client as client
-from obspy.core import Stream, read, UTCDateTime, Trace
-
-import glob
-import pandas as pd
-import pickle
 
 from data_process import spectro_extract_pred, spectro_extract_valid
 from prediction import pred, valid 

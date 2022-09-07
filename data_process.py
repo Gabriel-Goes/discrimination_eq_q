@@ -1,9 +1,7 @@
 import obspy as op
-from obspy.clients.fdsn import Client as client
-from obspy.core import Stream, read, UTCDateTime, Trace
+from obspy.core import read
 import matplotlib.mlab as mlab
-import matplotlib.pyplot as plt
-from matplotlib.ticker import MultipleLocator
+
 import numpy as np
 from math import *  
 import glob

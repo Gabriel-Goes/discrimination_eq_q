@@ -1,21 +1,14 @@
-from math import radians, cos, sin
-import obspy as op
-from obspy.clients.fdsn import Client as client
-from obspy.core import Stream, read, UTCDateTime, Trace
 
-import sys
-
-import numpy as np
-from scipy import signal
-import pickle
 
 import glob
 import os 
 import csv
-from tensorflow import keras
-import tensorflow as tf
 
+import tensorflow as tf
+import numpy as np
 from numpy import moveaxis
+
+
 
 def pred(model_dir, spectro_dir, output_dir) : 
     """Event class prediction
