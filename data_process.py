@@ -155,7 +155,7 @@ def spectro_extract_pred(data_dir) :
         nb_evt +=1
         print('*****************')
         print('EVENT', nb_evt , '/', len(events))
-        time = events[a].split('/')[2]
+        time = events[a].split('/')[-1]
         print(time)
         
         if not os.path.exists(f'./spectro_demo/{time}'):
