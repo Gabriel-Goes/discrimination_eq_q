@@ -3,11 +3,11 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - numpy=1.21.3=py38h49b9922_0
-  - ipython=7.28.0=py38h5fd9f69_0
-  - tensorflow-estimator=2.4.0=pyh9656e83_0
-  - obspy=1.2.2=py38h65ad66c_0
-  - matplotlib-base=3.4.3=py38hc7d2367_1
+  - numpy=1.21.3
+  - ipython=7.28.0
+  - tensorflow-estimator
+  - obspy=1.2.2
+  - matplotlib-base=3.4.3
   - pip : 
     - keras==2.8.0
     - keras-applications==1.0.8
