@@ -5,8 +5,8 @@
 * Download this repository : 
 
 ```
-git clone ...
-cd ...
+git clone https://gitlab.univ-nantes.fr/E181658E/discrimination_eq_q.git
+cd discrimination_eq_q
 ```
 
 * Install to default environment : 

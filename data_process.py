@@ -1,3 +1,4 @@
+import os
 import obspy as op
 from obspy.core import read
 import matplotlib.mlab as mlab
@@ -5,7 +6,8 @@ import matplotlib.mlab as mlab
 import numpy as np
 from math import *  
 import glob
-import os
+
+
 
 from obspy.signal.invsim import cosine_taper
 
@@ -56,7 +58,7 @@ def get_fft(trace, WINDOW_LENGTH, OVERLAP, nb_pts) :
 
 
 
-def spectro_extract_valid(data_dir, events_list) : 
+def spectro_extract_valid(data_dir, spectro_dir, events_list) : 
     """Spectrogramm extraction for the valid mode
     
         data_dir : str, path of the input mseed
@@ -71,21 +73,22 @@ def spectro_extract_valid(data_dir, events_list) :
     for a in range(len(events_list)) :  
         nb_evt +=1
         print('*****************')
-        print('EVENT', nb_evt , '/', len(events_list))
+        
         time = events_list[a][0]
         
-        if not os.path.exists(f'./spectro_demo/{time}'):
-            os.makedirs(f'./spectro_demo/{time}')
+        if not os.path.exists(f'{spectro_dir}/{time}'):
+            os.makedirs(f'{spectro_dir}/{time}')
 
         list_stream = glob.glob(f'{data_dir}/{time}/*')
         
-        print('Number of stream :', len(list_stream))
+        #print('Number of stream :', len(list_stream))
         nb_st = 0
         for stream in list_stream : 
             nb_st +=1
+            print('EVENT', nb_evt , '/', len(events_list), end = "\r")
             print('Stream', nb_st , '/', len(list_stream), end = "\r")
             st = op.read(stream,  dtype=np.dtype(float))
-            stream_name = (stream.split('/')[3]).split('.mseed')[0]
+            stream_name = (stream.split('/')[-1]).split('.mseed')[0]
 
             st.detrend('demean')
             st.taper(0.05)
@@ -136,10 +139,10 @@ def spectro_extract_valid(data_dir, events_list) :
         
             if find == True and len(spectro)==3 : 
                 spectro = np.array(spectro)    
-                np.save(f'./spectro_demo/{time}/{stream_name}.npy', spectro)
+                np.save(f'{spectro_dir}/{time}/{stream_name}.npy', spectro)
 
 
-def spectro_extract_pred(data_dir) : 
+def spectro_extract_pred(data_dir, spectro_dir) : 
     """Spectrogramm extraction for the prediction mode
     
         data_dir : str, path of the input mseed
@@ -156,10 +159,10 @@ def spectro_extract_pred(data_dir) :
         print('*****************')
         print('EVENT', nb_evt , '/', len(events))
         time = events[a].split('/')[-1]
-        print(time)
         
-        if not os.path.exists(f'./spectro_demo/{time}'):
-            os.makedirs(f'./spectro_demo/{time}')
+        
+        if not os.path.exists(f'{spectro_dir}/{time}'):
+            os.makedirs(f'{spectro_dir}/{time}')
 
         list_stream = glob.glob(f'{data_dir}/{time}/*')
         
@@ -167,10 +170,12 @@ def spectro_extract_pred(data_dir) :
         nb_st = 0
         for stream in list_stream : 
             nb_st +=1
+            #print('EVENT', nb_evt , '/', len(events), end = "\r")
             print('Stream', nb_st , '/', len(list_stream), end = "\r")
+            
             st = op.read(stream,  dtype=np.dtype(float))
             
-            stream_name = (stream.split('/')[3]).split('.mseed')[0]
+            stream_name = (stream.split('/')[-1]).split('.mseed')[0]
 
             st.detrend('demean')
             st.taper(0.05)
@@ -221,4 +226,4 @@ def spectro_extract_pred(data_dir) :
         
             if find == True and len(spectro)==3 : 
                 spectro = np.array(spectro)    
-                np.save(f'./spectro_demo/{time}/{stream_name}.npy', spectro)
+                np.save(f'{spectro_dir}/{time}/{stream_name}.npy', spectro)

@@ -22,6 +22,10 @@ def read_args():
                       default="./mseed_demo",
                       help="Input mseed file directory")
 
+    parser.add_argument("--spectro_dir",
+                      default="./spectro_demo",
+                      help="Output spectrogram file directory")
+
     parser.add_argument("--csv_dir",
                       default=None,
                       help="If mode valid : Input csv file directory")
@@ -42,12 +46,12 @@ def main(args):
 
     
     if args.mode == "pred":
-        data = spectro_extract_pred(data_dir=args.data_dir)
-        pred(model_dir=args.model_dir, spectro_dir='./spectro_demo', output_dir=args.output_dir)
+        data = spectro_extract_pred(data_dir=args.data_dir, spectro_dir=args.spectro_dir)
+        pred(model_dir=args.model_dir, spectro_dir=args.spectro_dir, output_dir=args.output_dir)
 
     if args.mode == "valid":
         events = np.genfromtxt(f'{args.csv_dir}', delimiter=',', skip_header = 1, dtype=str)
-        data = spectro_extract_valid(data_dir=args.data_dir, events_list=events)
+        data = spectro_extract_valid(data_dir=args.data_dir, spectro_dir=args.spectro_dir, events_list=events)
         valid(model_dir=args.model_dir, spectro_dir='./spectro_demo', output_dir=args.output_dir, event_label=events)
 
     
