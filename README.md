@@ -12,13 +12,13 @@ cd discrimination_eq_q
 * Install to default environment : 
 
 ```
-conda env update -f=env.yml -n base
+conda env update -f=environment.yml -n base
 ```
 
 * Install to "discrim" virtual envirionment
 
 ```
-conda env create -f env.yml
+conda env create -f environment.yml
 conda activate discrim
 ```
 
