@@ -73,7 +73,7 @@ def spectro_extract_valid(data_dir, spectro_dir, events_list) :
     for a in range(len(events_list)) :  
         nb_evt +=1
         print('*****************')
-        
+        print('EVENT', nb_evt , '/', len(events_list))
         time = events_list[a][0]
         
         if not os.path.exists(f'{spectro_dir}/{time}'):
@@ -81,11 +81,11 @@ def spectro_extract_valid(data_dir, spectro_dir, events_list) :
 
         list_stream = glob.glob(f'{data_dir}/{time}/*')
         
-        #print('Number of stream :', len(list_stream))
+        print('Number of stream :', len(list_stream))
         nb_st = 0
         for stream in list_stream : 
             nb_st +=1
-            print('EVENT', nb_evt , '/', len(events_list), end = "\r")
+            
             print('Stream', nb_st , '/', len(list_stream), end = "\r")
             st = op.read(stream,  dtype=np.dtype(float))
             stream_name = (stream.split('/')[-1]).split('.mseed')[0]
