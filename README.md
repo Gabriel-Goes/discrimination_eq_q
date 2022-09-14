@@ -1,4 +1,4 @@
-#  New CNN based tool to discriminate anthropogenic from natural low magnitude seismic events
+#  Python software for discrimination between natural and anthropogenic events
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/git/https%3A%2F%2Fgitlab.univ-nantes.fr%2FE181658E%2Fdiscrimination_eq_q/HEAD)
 
