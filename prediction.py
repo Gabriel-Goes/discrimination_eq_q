@@ -55,7 +55,7 @@ def pred(model_dir, spectro_dir, output_dir):
     for evt in events:
         nb_evt += 1
         print('*****************')
-        print(f'EVENT {nb_evt} / {len{events}}')
+        print(f'EVENT {nb_evt} / {len(events)}')
 
         time = evt.split('/')[-1]
         pred_nat = 0
