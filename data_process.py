@@ -12,21 +12,22 @@ from obspy.core import read
 from obspy.signal.invsim import cosine_taper
 
 
-def fft_taper(data):
+def fft_taper(data: np.ndarray()) -> np.ndarray():
     """
     Cosine taper for computation of FFT.
 
-    :type data: array_like.
+    :type data: numpy.ndarray().
     :param data: Input data. Vector that contains the amplitude of a seismic
         trace.
 
     :return: The tapered data window.
     """
 
-    return data * cosine_taper(npts=len(data), p=0.2)
+    return data * cosine_taper(npts=data.size, p=0.2)
 
 
-def get_fft(trace, WINDOW_LENGTH, OVERLAP, nb_pts):
+def get_fft(trace: op.core.trace.Trace(), WINDOW_LENGTH: int,
+            OVERLAP: float, nb_pts: int) -> tuple:
     """
         Compute the Fourier Transform of a seismic trace.
 
@@ -47,8 +48,6 @@ def get_fft(trace, WINDOW_LENGTH, OVERLAP, nb_pts):
 
     s_rate = trace.stats.sampling_rate
 
-    #np_pts = 512
-
     nb_pts = int(WINDOW_LENGTH * s_rate)
     nb_overlap = int(OVERLAP * nb_pts)
     window = fft_taper
@@ -60,20 +59,21 @@ def get_fft(trace, WINDOW_LENGTH, OVERLAP, nb_pts):
     numFreqs = nb_pts//2 + 1
     result = np.fft.fft(result, n=nb_pts, axis=0)[:numFreqs, :]
 
-    freqs = np.fft.fftfreq(nb_pts, 1/s_rate)[:numFreqs]
+    freqs = np.fft.fftfreq(nb_pts, 1 / s_rate)[:numFreqs]
     freqs[-1] *= -1
     # Discard the first element (offset)
     result = result[1:]
     freqs = freqs[1:]
 
-    result = np.abs(result)/trace.data.size
+    result = np.abs(result) / trace.data.size
 
     result = result.ravel()
 
     return result, freqs
 
 
-def spectro_extract_valid(data_dir, spectro_dir, events_list):
+def spectro_extract_valid(data_dir: str, spectro_dir: str,
+                          events_list: list) -> None:
     """
         Compute the spectrograms that will be used for the validation.
         The matrices are saved as NumPy objects.
@@ -108,7 +108,7 @@ def spectro_extract_valid(data_dir, spectro_dir, events_list):
             nb_st += 1
 
             print(f'Stream {nb_st} / {len(list_stream)}\r')
-            st = op.read(stream,  dtype=np.dtype(float))
+            st = op.read(stream, dtype=float)
             stream_name = (stream.split('/')[-1]).split('.mseed')[0]
 
             st.detrend('demean')
@@ -160,7 +160,7 @@ def spectro_extract_valid(data_dir, spectro_dir, events_list):
                 np.save(f'{spectro_dir}/{time}/{stream_name}.npy', spectro)
 
 
-def spectro_extract_pred(data_dir, spectro_dir):
+def spectro_extract_pred(data_dir: str, spectro_dir: str) -> None:
     """
     Compute the spectrogramms that will be used for the prediction.
     The spectrograms are saved as NumPy objects.
@@ -191,11 +191,9 @@ def spectro_extract_pred(data_dir, spectro_dir):
         nb_st = 0
         for stream in list_stream:
             nb_st += 1
-            #print('EVENT', nb_evt , '/', len(events), end = "\r")
+
             print(f'Stream {nb_st} / {len(list_stream)}\r')
-
             st = op.read(stream, dtype=float)
-
             stream_name = (stream.split('/')[-1]).split('.mseed')[0]
 
             st.detrend('demean')
