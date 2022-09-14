@@ -11,11 +11,15 @@ from numpy import moveaxis
 
 
 def pred(model_dir, spectro_dir, output_dir):
-    """Event class prediction
-        model_dir : str, path of the input trained model
-        spectro_dir : str, path of the input spectrograms
-        output_dir : str, path of the output file
+    """
+    Event class prediction.
 
+    :type model_dir: str
+    :param model_dir: Absolute path to the input trained model.
+    :type spectro_dir: str
+    :param spectro_dir: Absolute path to the input spectrograms.
+    :type output_dir: str
+    :param output_dir: Absolute path where to save to output files.
     """
 
     csvPr_sta = open(os.path.join(
@@ -45,24 +49,24 @@ def pred(model_dir, spectro_dir, output_dir):
 
     events = glob.glob(f'{spectro_dir}/*')
 
-    print('Number of events :', len(events))
+    print(f'Number of events: {len(events)}')
 
     nb_evt = 0
     for evt in events:
         nb_evt += 1
         print('*****************')
-        print('EVENT', nb_evt, '/', len(events))
+        print(f'EVENT {nb_evt} / {len{events}}')
 
         time = evt.split('/')[-1]
         pred_nat = 0
         pred_ant = 0
 
         list_spect = glob.glob(f'{spectro_dir}/{time}/*')
-        print('Number of station :', len(list_spect))
+        print(f'Number of station: {len(list_spect)}')
         nb_st = 0
         for spect in list_spect:
             nb_st += 1
-            print('Station', nb_st, '/', len(list_spect), end="\r")
+            print(f'Station {nb_st} / {len(list_spect)}\r')
             file_name = (spect.split('/')[-1]).split('.npy')[0]
 
             station = file_name.split('_')[1]
@@ -107,11 +111,17 @@ def pred(model_dir, spectro_dir, output_dir):
 
 
 def valid(model_dir, spectro_dir, output_dir, event_label):
-    """Event class validation
-        model_dir : str, input trained model
-        spectro_dir : str, path of the input spectrograms
-        output_dir : str, path of the output file
-        event_label : list, class of events to validate
+    """
+    Event class validation.
+
+    :type model_dir: str
+    :param model_dir: Absolute path the the trained model.
+    :type spectro_dir: str
+    :param spectro_dir: Absolute path to the input spectrograms.
+    :type output_dir: str
+    :param output_dir: Absolute path where to save the output files.
+    :type event_label: list
+    :param event_label: The class of event to validate.
     """
 
     csvPr_sta = open(os.path.join(
@@ -142,13 +152,13 @@ def valid(model_dir, spectro_dir, output_dir, event_label):
 
     events = glob.glob(f'{spectro_dir}/*')
 
-    print('Number of events :', len(events))
+    print(f'Number of events: {len(events)}')
     print(len(event_label))
     nb_evt = 0
     for a in range(len(event_label)):
         nb_evt += 1
         print('*****************')
-        print('EVENT', nb_evt, '/', len(event_label), end="\r")
+        print(f'EVENT {nb_evt} / {len(event_label)}\r')
         time = event_label[a][0]
 
         class_ = event_label[a][1]
@@ -157,11 +167,11 @@ def valid(model_dir, spectro_dir, output_dir, event_label):
         pred_ant = 0
 
         list_spect = glob.glob(f'{spectro_dir}/{time}/*')
-        print('Number of station :', len(list_spect))
+        print(f'Number of station: {len(list_spect)}')
         nb_st = 0
         for spect in list_spect:
             nb_st += 1
-            print('Station', nb_st, '/', len(list_spect), end="\r")
+            print(f'Station {nb_st} / {len(list_spect)}\r')
             file_name = (spect.split('/')[-1]).split('.npy')[0]
 
             station = file_name.split('_')[1]
