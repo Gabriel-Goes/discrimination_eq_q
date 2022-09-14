@@ -8,7 +8,6 @@ import matplotlib.mlab as mlab
 import numpy as np
 
 import obspy as op
-from obspy.core import read
 from obspy.signal.invsim import cosine_taper
 
 
