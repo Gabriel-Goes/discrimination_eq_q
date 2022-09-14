@@ -2,7 +2,6 @@
 # coding: utf-8
 
 import glob
-import math as m
 import os
 
 import matplotlib.mlab as mlab
@@ -23,10 +22,8 @@ def fft_taper(data):
 
     :return: The tapered data window.
     """
-    data *= cosine_taper(npts=len(data),
-                         p=0.2)
 
-    return data
+    return data * cosine_taper(npts=len(data), p=0.2)
 
 
 def get_fft(trace, WINDOW_LENGTH, OVERLAP, nb_pts):
@@ -47,6 +44,7 @@ def get_fft(trace, WINDOW_LENGTH, OVERLAP, nb_pts):
         :return: 2 numpy.ndarray that contains the frequency vector and the
             amplitude spectrum of the input signal.
     """
+
     s_rate = trace.stats.sampling_rate
 
     #np_pts = 512
@@ -61,7 +59,7 @@ def get_fft(trace, WINDOW_LENGTH, OVERLAP, nb_pts):
     result = result * window.reshape((-1, 1))
     numFreqs = nb_pts//2 + 1
     result = np.fft.fft(result, n=nb_pts, axis=0)[:numFreqs, :]
-    # print(len(result[0]))
+
     freqs = np.fft.fftfreq(nb_pts, 1/s_rate)[:numFreqs]
     freqs[-1] *= -1
     # Discard the first element (offset)
@@ -91,7 +89,7 @@ def spectro_extract_valid(data_dir, spectro_dir, events_list):
     WINDOW_LENGTH = 1
     OVERLAP = (1 - 0.75)
 
-    print('Number of events:', len(events_list))
+    print(f'Number of events: {len(events_list)}')
     nb_evt = 0
     for a in range(len(events_list)):
         nb_evt += 1
@@ -104,12 +102,12 @@ def spectro_extract_valid(data_dir, spectro_dir, events_list):
 
         list_stream = glob.glob(f'{data_dir}/{time}/*')
 
-        print('Number of stream:', len(list_stream))
+        print(f'Number of stream: {len(list_stream)}')
         nb_st = 0
         for stream in list_stream:
             nb_st += 1
 
-            print(f'Stream{nb_st}/{len(list_stream)}\r')
+            print(f'Stream {nb_st} / {len(list_stream)}\r')
             st = op.read(stream,  dtype=np.dtype(float))
             stream_name = (stream.split('/')[-1]).split('.mseed')[0]
 
@@ -129,12 +127,9 @@ def spectro_extract_valid(data_dir, spectro_dir, events_list):
             spectro = []
             find = False
             for c in compo:
-
                 trace = st.select(component=c)[0]
                 s_rate = trace.stats.sampling_rate
                 nb_pts = int(WINDOW_LENGTH * s_rate)
-
-                nyquist_f = trace.stats.sampling_rate / 2
 
                 fft_list = []
                 time_used = []
@@ -149,7 +144,7 @@ def spectro_extract_valid(data_dir, spectro_dir, events_list):
                     time_used.append(mean_time - trace.stats.starttime)
                     start += (WINDOW_LENGTH * OVERLAP)
 
-                    fft, freqs = get_fft(tr, WINDOW_LENGTH, OVERLAP, nb_pts)
+                    fft, _ = get_fft(tr, WINDOW_LENGTH, OVERLAP, nb_pts)
 
                     fft = np.array(fft)
                     fft_list.append(fft)
@@ -223,8 +218,6 @@ def spectro_extract_pred(data_dir, spectro_dir):
                 s_rate = trace.stats.sampling_rate
                 nb_pts = int(WINDOW_LENGTH * s_rate)
 
-                nyquist_f = trace.stats.sampling_rate / 2
-
                 fft_list = []
                 time_used = []
                 start = trace.stats.starttime
@@ -238,7 +231,7 @@ def spectro_extract_pred(data_dir, spectro_dir):
                     time_used.append(mean_time - trace.stats.starttime)
                     start += (WINDOW_LENGTH * OVERLAP)
 
-                    fft, freqs = get_fft(tr, WINDOW_LENGTH, OVERLAP, nb_pts)
+                    fft, _ = get_fft(tr, WINDOW_LENGTH, OVERLAP, nb_pts)
 
                     fft = np.array(fft)
                     fft_list.append(fft)
