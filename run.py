@@ -62,7 +62,7 @@ def main(args):
               output_dir=args.output_dir, event_label=events)
 
     else:
-        print("mode should be: train, valid, or pred")
+        print("Mode should be: train, valid, or pred")
 
     return
 
