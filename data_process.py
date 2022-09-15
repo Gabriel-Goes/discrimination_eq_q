@@ -11,7 +11,7 @@ import obspy as op
 from obspy.signal.invsim import cosine_taper
 
 
-def fft_taper(data: np.ndarray()) -> np.ndarray():
+def fft_taper(data: np.ndarray) -> np.ndarray:
     """
     Cosine taper for computation of FFT.
 
@@ -25,7 +25,7 @@ def fft_taper(data: np.ndarray()) -> np.ndarray():
     return data * cosine_taper(npts=data.size, p=0.2)
 
 
-def get_fft(trace: op.core.trace.Trace(), WINDOW_LENGTH: int,
+def get_fft(trace: op.core.trace.Trace, WINDOW_LENGTH: int,
             OVERLAP: float, nb_pts: int) -> tuple:
     """
         Compute the Fourier Transform of a seismic trace.
