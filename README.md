@@ -89,7 +89,7 @@ The algorithm supports the mseed data format.
 
 -  mseed format 
 ```
- python run.py --mode valid --csv_file ./demo_file.csv --data_dir ./mseed_demo --output_dir ./output_demo 
+ python run.py --mode valid --csv_dir ./demo_file.csv --data_dir ./mseed_demo --output_dir ./output_demo 
 ```
 
 Output files are automatically saved in "output_demo". 
