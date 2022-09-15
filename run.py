@@ -15,7 +15,7 @@ def read_args() -> argparse.Namespace:
 
     parser.add_argument('--mode',
                         type=str, default='pred',
-                        help='train/valid/pred')
+                        help='valid/pred')
 
     parser.add_argument('--model_dir',
                         type=str, default='./model/model_2021354T1554.h5',
@@ -62,7 +62,7 @@ def main(args: argparse.Namespace):
               output_dir=args.output_dir, event_label=events)
 
     else:
-        print("Mode should be: train, valid, or pred")
+        print("Mode should be: valid, or pred")
 
     return
 
