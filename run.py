@@ -53,7 +53,7 @@ def main(args: argparse.Namespace):
         pred(model_dir=args.model_dir, spectro_dir=args.spectro_dir,
              output_dir=args.output_dir)
 
-    if args.mode == 'valid':
+    elif args.mode == 'valid':
         events = np.genfromtxt(
             f'{args.csv_dir}', delimiter=',', skip_header=1, dtype=str)
         data = spectro_extract_valid(
