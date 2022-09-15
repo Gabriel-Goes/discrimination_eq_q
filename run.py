@@ -58,7 +58,7 @@ def main(args: argparse.Namespace):
             f'{args.csv_dir}', delimiter=',', skip_header=1, dtype=str)
         data = spectro_extract(data_dir=args.data_dir,
                                spectro_dir=args.spectro_dir, events_list=events)
-        valid(model_dir=args.model_dir, spectro_dir='./spectro_demo',
+        valid(model_dir=args.model_dir, spectro_dir=args.spectro_dir,
               output_dir=args.output_dir, event_label=events)
 
     else:
