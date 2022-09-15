@@ -1,13 +1,13 @@
-#! /usr/bin/env python3
 # coding: utf-8
 
 import glob
 import os
 import csv
 
-import tensorflow as tf
 import numpy as np
 from numpy import moveaxis
+
+import tensorflow as tf
 
 
 def pred(model_dir, spectro_dir, output_dir):
