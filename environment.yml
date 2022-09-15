@@ -1,4 +1,4 @@
-name: discri
+name: discrim
 channels:
   - conda-forge
   - defaults
@@ -9,10 +9,9 @@ dependencies:
   - obspy=1.2.2
   - pandas=1.2.0
   - tensorflow-estimator
-  - pip : 
+  - pip :
     - keras==2.8.0
     - keras-applications==1.0.8
     - pip==22.0.3
     - tensorflow==2.8.0
     - tensorflow-io-gcs-filesystem==0.24.0
-    
