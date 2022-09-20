@@ -114,7 +114,7 @@ def spectro_extract(data_dir: str, spectro_dir: str,
         for stream in list_stream:
             nb_st += 1
 
-            print(f'Stream {nb_st} / {len(list_stream)}\r')
+            print(f'Stream {nb_st} / {len(list_stream)}', end = "\r")
             st = op.read(stream, dtype=float)
             stream_name = (stream.split('/')[-1]).split('.mseed')[0]
 
