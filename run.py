@@ -15,7 +15,7 @@ def read_args() -> argparse.Namespace:
 
     parser.add_argument('--mode',
                         type=str, default='pred',
-                        help='valid/pred')
+                        help=' "valid" for the validation mode or "pred" for the prediction mode.')
 
     parser.add_argument('--model_dir',
                         type=str, default='./model/model_2021354T1554.h5',
@@ -31,15 +31,11 @@ def read_args() -> argparse.Namespace:
 
     parser.add_argument('--csv_dir',
                         default=None,
-                        help="If mode valid: Input csv file directory")
+                        help="Input csv file directory")
 
     parser.add_argument('--output_dir',
                         type=str, default='./output_demo',
                         help='Output directory')
-
-    parser.add_argument("--save_spec",
-                        default=True,
-                        help="Save spectrograms")
 
     args = parser.parse_args()
     return args
