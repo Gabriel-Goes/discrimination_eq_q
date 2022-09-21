@@ -43,6 +43,16 @@ Each mseed file corresponds to the raw 3 component recordings of 60 sec.
 A csv file is also required to apply the algorithm. 
 It is composed of a column with folders/events to discriminate. If the -valid option is specified, the file must have a second column with the label associated with the event. 
 
+
+| time     | label_cat      |
+| ------------- | ------------- |
+| 2022004T134407         | 0         |
+| 2022003T041502         | 0         | 
+| 2022001T213524         | 0         | 
+| 2022004T111745         | 1         | 
+
+Label 0 means "Natural event", label 1 "Anthropogenic event".
+
 ## Trained model
 
 Located in directory: model/model_2021354T1554.h5
