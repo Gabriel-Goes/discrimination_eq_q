@@ -96,8 +96,11 @@ def spectro_extract(data_dir: str, spectro_dir: str,
         nb_evt += 1
         print('*****************')
         print(f'EVENT {nb_evt} / {len(events)}')
-
-        time = events[a][0]
+        
+        if events[a].size == 1 : 
+            time = events[a]
+        else : 
+            time = events[a][0]
 
         if not os.path.exists(f'{spectro_dir}/{time}'):
             os.makedirs(f'{spectro_dir}/{time}')

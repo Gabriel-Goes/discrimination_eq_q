@@ -10,7 +10,7 @@ from numpy import moveaxis
 import tensorflow as tf
 
 
-def discrim(spectro_dir, output_dir, event_label, valid):
+def discrim(model_dir, spectro_dir, output_dir, event_label, valid):
     """
     Event class prediction.
 
@@ -71,7 +71,7 @@ def discrim(spectro_dir, output_dir, event_label, valid):
                              quotechar='"', quoting=csv.QUOTE_MINIMAL)
     predict_net.writerow(csvnet_row)
 
-    model = tf.keras.models.load_model("./model/model_2021354T1554.h5")
+    model = tf.keras.models.load_model(model_dir)
 
     events = glob.glob(f'{spectro_dir}/*')
 
@@ -82,10 +82,16 @@ def discrim(spectro_dir, output_dir, event_label, valid):
         nb_evt += 1
         print('*****************')
         print(f'EVENT {nb_evt} / {len(event_label)}')
-        time = event_label[a][0]
-
+        
         if valid: 
+            time = event_label[a][0]
             class_ = event_label[a][1]
+        elif event_label[a].size == 2 : 
+            time = event_label[a][0]
+        else : 
+            time = event_label[a]
+
+
         pred_nat = 0
         pred_ant = 0
 
