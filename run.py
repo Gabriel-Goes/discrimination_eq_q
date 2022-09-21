@@ -13,6 +13,10 @@ def read_args() -> argparse.Namespace:
 
     parser = argparse.ArgumentParser()
 
+    parser.add_argument('--model_dir',
+                        type=str, default='./model/model_2021354T1554.h5',
+                        help="Model file directory.")
+
     parser.add_argument('--data_dir',
                         type=str, default='./mseed_demo',
                         help="Input mseed file directory.")
