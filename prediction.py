@@ -66,7 +66,7 @@ def pred(model_dir, spectro_dir, output_dir):
         nb_st = 0
         for spect in list_spect:
             nb_st += 1
-            print(f'Station {nb_st} / {len(list_spect)}\r')
+            print(f'Station {nb_st} / {len(list_spect)}', end = "\r")
             file_name = (spect.split('/')[-1]).split('.npy')[0]
 
             station = file_name.split('_')[1]
@@ -158,7 +158,7 @@ def valid(model_dir, spectro_dir, output_dir, event_label):
     for a in range(len(event_label)):
         nb_evt += 1
         print('*****************')
-        print(f'EVENT {nb_evt} / {len(event_label)}\r')
+        print(f'EVENT {nb_evt} / {len(event_label)}')
         time = event_label[a][0]
 
         class_ = event_label[a][1]
@@ -171,7 +171,7 @@ def valid(model_dir, spectro_dir, output_dir, event_label):
         nb_st = 0
         for spect in list_spect:
             nb_st += 1
-            print(f'Station {nb_st} / {len(list_spect)}\r')
+            print(f'Station {nb_st} / {len(list_spect)}', end = "\r")
             file_name = (spect.split('/')[-1]).split('.npy')[0]
 
             station = file_name.split('_')[1]
