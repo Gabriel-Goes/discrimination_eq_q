@@ -65,7 +65,7 @@ The algorithm supports the mseed data format.
 
 -  mseed format
 ```
- python run.py --data_dir ./mseed_demo --spectro_dir ./spectro_demo --output_dir ./output_demo --csv_dir demo_file.csv
+ python run.py --data_dir ./mseed_demo --spectro_dir ./spectro_demo --output_dir ./output_demo --csv_dir demo_pred.csv
 ```
 
 Output files are automatically saved in "output_demo".
@@ -104,7 +104,7 @@ The algorithm supports the mseed data format.
 
 -  mseed format
 ```
- python run.py --data_dir ./mseed_demo --spectro_dir ./spectro_demo --output_dir ./output_demo --csv_dir demo_file.csv --valid
+ python run.py --data_dir ./mseed_demo --spectro_dir ./spectro_demo --output_dir ./output_demo --csv_dir demo_valid.csv --valid
 ```
 
 Output files are automatically saved in "output_demo".
