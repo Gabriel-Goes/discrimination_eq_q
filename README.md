@@ -40,6 +40,19 @@ To apply the algorithm, we need a folder architecture:
 
 Each mseed file corresponds to the raw 3 component recordings of 60 sec.
 
+A csv file is also required to apply the algorithm. 
+It is composed of a column with folders/events to discriminate. If the -valid option is specified, the file must have a second column with the label associated with the event. 
+
+
+| time     | label_cat      |
+| ------------- | ------------- |
+| 2022004T134407         | 0         |
+| 2022003T041502         | 0         | 
+| 2022001T213524         | 0         | 
+| 2022004T111745         | 1         | 
+
+Label 0 means "Natural event", label 1 "Anthropogenic event".
+
 ## Trained model
 
 Located in directory: model/model_2021354T1554.h5
@@ -47,11 +60,12 @@ Located in directory: model/model_2021354T1554.h5
 
 ## Prediction
 
+As input, you need a one-column csv file with the folders/events to be discriminated.
 The algorithm supports the mseed data format.
 
 -  mseed format
 ```
- python run.py --mode pred --data_dir ./mseed_demo --output_dir ./output_demo
+ python run.py --data_dir ./mseed_demo --spectro_dir ./spectro_demo --output_dir ./output_demo --csv_dir demo_pred.csv
 ```
 
 Output files are automatically saved in "output_demo".
@@ -84,12 +98,13 @@ event and then average them. This gives us an event-based classification.
 
 ## Validation
 
-This mode can be used if the label is known. As input you need a csv file with the associated label for each event.
+This mode can be used if the label is known. The -valid argument is then specified.
+As input you need a csv file of two columns with the associated label for each event.
 The algorithm supports the mseed data format.
 
 -  mseed format
 ```
- python run.py --mode valid --csv_dir ./demo_file.csv --data_dir ./mseed_demo --output_dir ./output_demo 
+ python run.py --data_dir ./mseed_demo --spectro_dir ./spectro_demo --output_dir ./output_demo --csv_dir demo_valid.csv --valid
 ```
 
 Output files are automatically saved in "output_demo".

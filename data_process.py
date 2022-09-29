@@ -71,7 +71,7 @@ def get_fft(trace: op.core.trace.Trace, WINDOW_LENGTH: int,
 
 
 def spectro_extract(data_dir: str, spectro_dir: str,
-                    events_list: list = None) -> None:
+                    events_list: list) -> None:
     """
         Compute the spectrograms that will be used for the validation.
         The matrices are saved as NumPy objects.
@@ -87,10 +87,8 @@ def spectro_extract(data_dir: str, spectro_dir: str,
     WINDOW_LENGTH = 1
     OVERLAP = (1 - 0.75)
 
-    if events_list is None:
-        events = glob.glob(f'{data_dir}/*')
-    else:
-        events = events_list
+    
+    events = events_list
 
     print(f'Number of events: {len(events)}')
     nb_evt = 0
@@ -98,10 +96,10 @@ def spectro_extract(data_dir: str, spectro_dir: str,
         nb_evt += 1
         print('*****************')
         print(f'EVENT {nb_evt} / {len(events)}')
-
-        if events_list is None:
-            time = events[a].split('/')[-1]
-        else:
+        
+        if events[a].size == 1 : 
+            time = events[a]
+        else : 
             time = events[a][0]
 
         if not os.path.exists(f'{spectro_dir}/{time}'):
