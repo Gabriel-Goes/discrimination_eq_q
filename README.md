@@ -26,7 +26,7 @@ conda activate discrim
 
 ## Reference
 
-C, Hourcade; M, Bonnin; E, Beucler (2022) "New CNN based tool to discriminate anthropogenic from natural low magnitude seismic events" Submitted - Journal Geophysical International
+Céline Hourcade, Mickaël Bonnin, Éric Beucler, New CNN based tool to discriminate anthropogenic from natural low magnitude seismic events, Geophysical Journal International, 2022;, ggac441, https://doi.org/10.1093/gji/ggac441
 
 ## Dataset
 
