@@ -24,8 +24,11 @@ def fft_taper(data: np.ndarray) -> np.ndarray:
     return data * cosine_taper(npts=data.size, p=0.2)
 
 
-def get_fft(trace: op.core.trace.Trace, WINDOW_LENGTH: int,
-            OVERLAP: float, nb_pts: int) -> tuple:
+def get_fft(
+        trace: op.core.trace.Trace,
+        WINDOW_LENGTH: int,
+        OVERLAP: float,
+        nb_pts: int) -> tuple:
     """
         Compute the Fourier Transform of a seismic trace.
 
@@ -54,7 +57,7 @@ def get_fft(trace: op.core.trace.Trace, WINDOW_LENGTH: int,
     result = mlab.stride_windows(trace.data, nb_pts, nb_overlap, axis=0)
     result = mlab.detrend(result, mlab.detrend_linear, axis=0)
     result = result * window.reshape((-1, 1))
-    numFreqs = nb_pts//2 + 1
+    numFreqs = nb_pts // 2 + 1
     result = np.fft.fft(result, n=nb_pts, axis=0)[:numFreqs, :]
 
     freqs = np.fft.fftfreq(nb_pts, 1 / s_rate)[:numFreqs]
@@ -70,14 +73,16 @@ def get_fft(trace: op.core.trace.Trace, WINDOW_LENGTH: int,
     return result, freqs
 
 
-def spectro_extract(data_dir: str, spectro_dir: str,
-                    events_list: list) -> None:
+def spectro_extract(
+        mseed_dir: str,
+        spectro_dir: str,
+        events_list: list) -> None:
     """
         Compute the spectrograms that will be used for the validation.
         The matrices are saved as NumPy objects.
 
-        :type data_dir: str
-        :param data_dir: Absolute path to the input MSEED signal.
+        :type mseed_dir: str
+        :param mseed_dir: Absolute path to the input MSEED signal.
         :type spectro_dir: str
         :param spectro_dir: Absolute path where to save the output
             spectrograms.
@@ -87,7 +92,6 @@ def spectro_extract(data_dir: str, spectro_dir: str,
     WINDOW_LENGTH = 1
     OVERLAP = (1 - 0.75)
 
-    
     events = events_list
 
     print(f'Number of events: {len(events)}')
@@ -96,23 +100,23 @@ def spectro_extract(data_dir: str, spectro_dir: str,
         nb_evt += 1
         print('*****************')
         print(f'EVENT {nb_evt} / {len(events)}')
-        
-        if events[a].size == 1 : 
+
+        if events[a].size == 1:
             time = events[a]
-        else : 
+        else:
             time = events[a][0]
 
         if not os.path.exists(f'{spectro_dir}/{time}'):
             os.makedirs(f'{spectro_dir}/{time}')
 
-        list_stream = glob.glob(f'{data_dir}/{time}/*')
+        list_stream = glob.glob(f'{mseed_dir}/{time}/*')
 
         print(f'Number of streams: {len(list_stream)}')
         nb_st = 0
         for stream in list_stream:
             nb_st += 1
 
-            print(f'Stream {nb_st} / {len(list_stream)}', end = "\r")
+            print(f'Stream {nb_st} / {len(list_stream)}', end="\r")
             st = op.read(stream, dtype=float)
             stream_name = (stream.split('/')[-1]).split('.mseed')[0]
 
@@ -160,6 +164,6 @@ def spectro_extract(data_dir: str, spectro_dir: str,
                     spectro.append(fft_list)
                     find = True
 
-            if find == True and len(spectro) == 3:
+            if find is True and len(spectro) == 3:
                 spectro = np.array(spectro)
                 np.save(f'{spectro_dir}/{time}/{stream_name}.npy', spectro)
