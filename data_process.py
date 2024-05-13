@@ -54,8 +54,10 @@ def get_fft(
     window = fft_taper
     window = window(np.ones(nb_pts, trace.data.dtype))
 
+    # --
     result = mlab.stride_windows(trace.data, nb_pts, nb_overlap, axis=0)
     result = mlab.detrend(result, mlab.detrend_linear, axis=0)
+    # --
     result = result * window.reshape((-1, 1))
     numFreqs = nb_pts // 2 + 1
     result = np.fft.fft(result, n=nb_pts, axis=0)[:numFreqs, :]
@@ -106,8 +108,7 @@ def spectro_extract(
         else:
             time = events[a][0]
 
-        if not os.path.exists(f'{spectro_dir}/{time}'):
-            os.makedirs(f'{spectro_dir}/{time}')
+        os.makedirs(f'{spectro_dir}/{time}', exist_ok=True)
 
         list_stream = glob.glob(f'{mseed_dir}/{time}/*')
 

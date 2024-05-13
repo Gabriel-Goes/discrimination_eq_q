@@ -12,7 +12,7 @@ def discrim(
         model: str,
         spectro_dir: str,
         output_dir: str,
-        event_label: list,
+        events: list,
         valid: bool) -> None:
     """
     Event class prediction.
