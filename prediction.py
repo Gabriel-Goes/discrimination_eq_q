@@ -7,85 +7,27 @@ import numpy as np
 from numpy import moveaxis
 import tensorflow as tf
 
+import pandas as pd
+
 
 def discrim(
         model: str,
         spectro_dir: str,
         output_dir: str,
-        events: list,
+        eventos: str,
         valid: bool) -> None:
     """
     Event class prediction.
 
-    :type model_dir: str
     :param model_dir: Absolute path to the input trained model.
-    :type spectro_dir: str
     :param spectro_dir: Absolute path to the input spectrograms.
-    :type output_dir: str
     :param output_dir: Absolute path where to save to output files.
-    :type event_label: list
-    :param event_label: The class of event to validate.
     """
 
-    if valid:
-        filename_csvsta = 'validation_station_level.csv'
-        csvsta_row = [
-            'file_name',
-            'station',
-            'label_cat',
-            'prob_nat',
-            'prob_ant',
-            'pred',
-            'nature'
-        ]
-
-        filename_csvnet = 'validation_network_level.csv'
-        csvnet_row = [
-            'event',
-            'label_cat',
-            'prob_nat',
-            'prob_ant',
-            'pred',
-            'nature'
-        ]
-    else:
-        filename_csvsta = 'prediction_station_level.csv'
-        csvsta_row = [
-            'file_name',
-            'station',
-            'prob_nat',
-            'prob_ant',
-            'pred',
-            'nature'
-        ]
-        filename_csvnet = 'prediction_network_level.csv'
-        csvnet_row = [
-            'event',
-            'prob_nat',
-            'prob_ant',
-            'pred',
-            'nature'
-        ]
-
-    csvPr_sta = open(
-        os.path.join(output_dir, filename_csvsta), 'w'
-    )
-    predict_sta = csv.writer(
-        csvPr_sta, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL
-    )
-    predict_sta.writerow(csvsta_row)
-    csvPr_net = open(os.path.join(output_dir, filename_csvnet), 'w')
-    predict_net = csv.writer(
-        csvPr_net, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL
-    )
-    predict_net.writerow(csvnet_row)
     model = tf.keras.models.load_model(model)
-    events = glob.glob(f'{spectro_dir}/*')
-    print(f'Number of events: {len(events)}')
-    nb_evt = 0
+    print(f'Number of events: {}')
 
-    for a in range(len(event_label)):
-        nb_evt += 1
+    for i, (index, evento) in enumerate(eventos.groupby('Evento'), 1):
         print('*****************')
         print(f'EVENT {nb_evt} / {len(event_label)}')
         if valid:

@@ -89,7 +89,7 @@ def spectro_extract(
     WINDOW_LENGTH = 1
     OVERLAP = (1 - 0.75)
 
-    # eventos.set_index(['Event', 'Station'], inplace=True)
+    eventos.set_index(['Event', 'Station'], inplace=True)
     n_ev = eventos.groupby(level=0).size().shape[0]
     print(f'Number of events: {n_ev}')
 
@@ -155,3 +155,5 @@ def spectro_extract(
             if find is True and len(spectro) == 3:
                 spectro = np.array(spectro)
                 np.save(f'{spectro_dir}/{index}/{stream_name}.npy', spectro)
+                # create new collumn in the dataframe with the path of the npy
+                eventos.loc[(index, ), 'Path'] = f'{spectro_dir}/{index}/{stream_name}.npy'
