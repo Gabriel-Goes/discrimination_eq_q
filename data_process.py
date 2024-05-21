@@ -9,6 +9,8 @@ import numpy as np
 import obspy as op
 from obspy.signal.invsim import cosine_taper
 
+import pandas as pd
+
 
 def fft_taper(data: np.ndarray) -> np.ndarray:
     """
@@ -30,23 +32,16 @@ def get_fft(
         OVERLAP: float,
         nb_pts: int) -> tuple:
     """
-        Compute the Fourier Transform of a seismic trace.
-
-        :type trace: obspy.Trace() object
-        :param trace: obspy.Trace() object that contains the seismogram to be
-            analyzed.
-        :type WINDOW_LENGTH: int
-        :param WINDOW_LENGTH: Length (in second) of the sliding windows.
-        :type OVERLAP: float
-        :param OVERLAP: Percentage of overlap between each shift.
-        :type np_pts: int
-        :param np_pts: Number of points in a window (sampling_rate *
-            WINDOWS_LENGTH)
-
-        :return: 2 numpy.ndarray that contains the frequency vector and the
-            amplitude spectrum of the input signal.
+    Compute the Fourier Transform of a seismic trace.
+    :param trace: obspy.Trace() object that contains the seismogram to be
+        analyzed.
+    :param WINDOW_LENGTH: Length (in second) of the sliding windows.
+    :param OVERLAP: Percentage of overlap between each shift.
+    :param np_pts: Number of points in a window (sampling_rate *
+        WINDOWS_LENGTH)
+    :return: 2 numpy.ndarray that contains the frequency vector and the
+        amplitude spectrum of the input signal.
     """
-
     s_rate = trace.stats.sampling_rate
 
     nb_pts = int(WINDOW_LENGTH * s_rate)
@@ -78,7 +73,7 @@ def get_fft(
 def spectro_extract(
         mseed_dir: str,
         spectro_dir: str,
-        events_list: list) -> None:
+        eventos: pd.Dataframe) -> None:
     """
         Compute the spectrograms that will be used for the validation.
         The matrices are saved as NumPy objects.
@@ -94,9 +89,7 @@ def spectro_extract(
     WINDOW_LENGTH = 1
     OVERLAP = (1 - 0.75)
 
-    events = events_list
-
-    print(f'Number of events: {len(events)}')
+    print(f'Number of events: {eventos.shape[0]}')
     nb_evt = 0
     for a in range(len(events)):
         nb_evt += 1

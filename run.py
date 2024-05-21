@@ -8,10 +8,9 @@ from data_process import spectro_extract
 
 cs = 'ClassificadorSismologico/'
 model = cs + 'fonte/rnc/model/model_2021354T1554.h5'
-mseed = cs + 'files/mseed'
-spectro = cs + 'files/spectro'
-pred_csv = cs + 'files/predcsv'
-output = cs + 'files/output'
+mseed = cs + 'arquivos/mseed'
+spectro = cs + 'arquivos/espectro'
+output = cs + 'arquivos/output'
 
 
 def read_args() -> argparse.Namespace:
@@ -30,10 +29,6 @@ def read_args() -> argparse.Namespace:
                         type=str, default=spectro,
                         help='Output spectrogram file directory.')
 
-    parser.add_argument('--pred_csv',
-                        type=str, default=pred_csv,
-                        help="Input csv file directory")
-
     parser.add_argument('--output_dir',
                         type=str, default=output,
                         help='Output directory')
@@ -49,20 +44,19 @@ def read_args() -> argparse.Namespace:
 
 
 def main(args: argparse.Namespace):
-    events = pd.read_csv(
-        args.pred_csv,
-        sep=',',
+    eventos = pd.read_csv(
+        'ClassificadorSismologico/arquivos/eventos/eventos.csv'
     )
     spectro_extract(
         mseed_dir=args.mseed_dir,
         spectro_dir=args.spectro_dir,
-        events=events
+        eventos=eventos
     )
     discrim(
         model=args.model,
         spectro_dir=args.spectro_dir,
         output_dir=f'ClassificadorSismologico/files/output/{args.output_dir}',
-        events=events,
+        eventos=eventos,
         valid=args.valid
     )
 
