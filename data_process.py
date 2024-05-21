@@ -73,7 +73,7 @@ def get_fft(
 def spectro_extract(
         mseed_dir: str,
         spectro_dir: str,
-        eventos: pd.Dataframe) -> None:
+        eventos: pd.DataFrame) -> None:
     """
         Compute the spectrograms that will be used for the validation.
         The matrices are saved as NumPy objects.
@@ -89,21 +89,16 @@ def spectro_extract(
     WINDOW_LENGTH = 1
     OVERLAP = (1 - 0.75)
 
-    print(f'Number of events: {eventos.shape[0]}')
-    nb_evt = 0
-    for a in range(len(events)):
-        nb_evt += 1
+    # eventos.set_index(['Event', 'Station'], inplace=True)
+    n_ev = eventos.groupby(level=0).size().shape[0]
+    print(f'Number of events: {n_ev}')
+
+    for i, (index, evento) in enumerate(eventos.groupby(level=0), start=1):
         print('*****************')
-        print(f'EVENT {nb_evt} / {len(events)}')
+        print(f'EVENT: {index} ({i} / {n_ev})')
 
-        if events[a].size == 1:
-            time = events[a]
-        else:
-            time = events[a][0]
-
-        os.makedirs(f'{spectro_dir}/{time}', exist_ok=True)
-
-        list_stream = glob.glob(f'{mseed_dir}/{time}/*')
+        os.makedirs(f'{spectro_dir}/{index}', exist_ok=True)
+        list_stream = glob.glob(f'{mseed_dir}/{index}/*')
 
         print(f'Number of streams: {len(list_stream)}')
         nb_st = 0
@@ -117,7 +112,6 @@ def spectro_extract(
             st.detrend('demean')
             st.taper(0.05)
             st = st.filter('highpass', freq=2, corners=4, zerophase=True)
-
             if st[0].stats.sampling_rate == 200:
                 st.decimate(2)
 
@@ -160,4 +154,4 @@ def spectro_extract(
 
             if find is True and len(spectro) == 3:
                 spectro = np.array(spectro)
-                np.save(f'{spectro_dir}/{time}/{stream_name}.npy', spectro)
+                np.save(f'{spectro_dir}/{index}/{stream_name}.npy', spectro)
