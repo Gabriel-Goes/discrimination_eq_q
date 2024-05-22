@@ -1,12 +1,8 @@
 # coding: utf-8
 
-import glob
-import os
-import csv
 import numpy as np
 from numpy import moveaxis
 import tensorflow as tf
-
 import pandas as pd
 
 
@@ -14,8 +10,7 @@ def discrim(
         model: str,
         spectro_dir: str,
         output_dir: str,
-        eventos: str,
-        valid: bool) -> None:
+        eventos: pd.DataFrame) -> None:
     """
     Event class prediction.
 
@@ -24,63 +19,44 @@ def discrim(
     :param output_dir: Absolute path where to save to output files.
     """
 
-    model = tf.keras.models.load_model(model)
-    print(f'Number of events: {}')
+    try:
+        eventos.set_index(['Event', 'Station'], inplace=True)
+    except KeyError:
+        pass
 
-    for i, (index, evento) in enumerate(eventos.groupby('Evento'), 1):
+    model = tf.keras.models.load_model(model)
+
+    n_ev = eventos.groupby('Event').size().shape[0]
+    print(f'Number of events: {n_ev}')
+    for i, (ev_index, evento) in enumerate(eventos.groupby('Event'), 1):
+        n_pcks = evento.shape[0]
         print('*****************')
-        print(f'EVENT {nb_evt} / {len(event_label)}')
-        if valid:
-            time = event_label[a][0]
-            class_ = event_label[a][1]
-        elif event_label[a].size == 2:
-            time = event_label[a][0]
-        else:
-            time = event_label[a]
+        print(f'EVENT {i} / {n_ev}')
+        print(f'Number of Picks: {n_pcks}')
         pred_nat = 0
         pred_ant = 0
 
-        list_spect = glob.glob(f'{spectro_dir}/{time}/*')
-        print(f'Number of station: {len(list_spect)}')
-        nb_st = 0
-
-        for spect in list_spect:
-            nb_st += 1
-            print(f'Station {nb_st} / {len(list_spect)}', end="\r")
-            file_name = (spect.split('/')[-1]).split('.npy')[0]
-            station = file_name.split('_')[1]
-            spect_file = np.load(f'{spect}', allow_pickle=True)
-            spect_file = [np.array(spect_file)]
+        for j, (st_index, pick) in enumerate(evento.groupby('Station'), 1):
+            print(f'Pick {j} / {n_pcks}', end="\r")
+            mseed = pick['Path'].values[0].split('/')[-1]
+            npy = mseed.replace('.mseed', '.npy')
+            spect_path = f'{spectro_dir}/{ev_index}/{npy}'
+            spect_file = [np.array(np.load(spect_path, allow_pickle=True))]
 
             x = moveaxis(spect_file, 1, 3)
 
             model_output = model.predict(x).round(3)
-            pred = np.argmax(model_output, axis=1)
+            pred_pick = np.argmax(model_output, axis=1)
 
-            if pred == 0:
+            if pred_pick == 0:
                 pred_final = 'Natural'
-            if pred == 1:
+            if pred_pick == 1:
                 pred_final = 'Anthropogenic'
 
-            if valid:
-                predict_sta.writerow([
-                    file_name,
-                    station,
-                    class_,
-                    model_output[0][0],
-                    model_output[0][1],
-                    pred[0],
-                    pred_final,
-                ])
-            else:
-                predict_sta.writerow([
-                    file_name,
-                    station,
-                    model_output[0][0],
-                    model_output[0][1],
-                    pred[0],
-                    pred_final,
-                ])
+            eventos.loc[(ev_index, st_index), 'Pick Pred'] = pred_pick[0]
+            eventos.loc[(ev_index, st_index), 'Pick Prob_Nat'] = model_output[0][0]
+            eventos.loc[(ev_index, st_index), 'Pick Prob_Ant'] = model_output[0][1]
+            eventos.loc[(ev_index, st_index), 'Pick Pred_final'] = pred_final
 
             pred_nat += model_output[0][0]
             pred_ant += model_output[0][1]
@@ -88,30 +64,21 @@ def discrim(
         pred_total = [pred_nat, pred_ant]
         try:
             pred_total = [
-                (float(i) / sum(pred_total)).round(3) for i in pred_total
+                (float(k) / sum(pred_total)).round(3) for k in pred_total
             ]
         except ZeroDivisionError:
-            print(f'Erro Evento: {time}')
+            print(f'Erro Evento: {ev_index}')
+
         pred_event = np.argmax(pred_total)
+
         if pred_event == 0:
             pred_final = 'Natural'
         if pred_event == 1:
             pred_final = 'Anthropogenic'
 
-        if valid:
-            predict_net.writerow([
-                time,
-                class_,
-                pred_total[0],
-                pred_total[1],
-                pred_event,
-                pred_final,
-            ])
-        else:
-            predict_net.writerow([
-                time,
-                pred_total[0],
-                pred_total[1],
-                pred_event,
-                pred_final,
-            ])
+        eventos.loc[(ev_index,), 'Event Pred'] = pred_event
+        eventos.loc[(ev_index,), 'Event Prob_Nat'] = pred_total[0]
+        eventos.loc[(ev_index,), 'Event Prob_Ant'] = pred_total[1]
+        eventos.loc[(ev_index,), 'Event Pred_final'] = pred_final
+
+    eventos.to_csv(f'{output_dir}/predito.csv')
