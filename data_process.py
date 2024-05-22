@@ -213,3 +213,5 @@ def spectro_extract(
             if find is True and len(spectro) == 3:
                 spectro = np.array(spectro)
                 np.save(f'{spectro_dir}/{index}/{stream_name}.npy', spectro)
+            else:
+                print(f'Error: {stream_name}')

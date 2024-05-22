@@ -7,10 +7,10 @@ from prediction import discrim
 from data_process import spectro_extract
 
 cs = 'ClassificadorSismologico/'
-model = cs + 'fonte/rnc/model/model_2021354T1554.h5'
-mseed = cs + 'arquivos/mseed'
-spectro = cs + 'arquivos/espectro'
-output = cs + 'arquivos/output'
+model = 'fonte/rnc/model/model_2021354T1554.h5'
+mseed = 'arquivos/mseed'
+spectro = 'arquivos/espectro'
+output = 'arquivos/resultados'
 
 
 def read_args() -> argparse.Namespace:
@@ -45,19 +45,18 @@ def read_args() -> argparse.Namespace:
 
 def main(args: argparse.Namespace):
     eventos = pd.read_csv(
-        'ClassificadorSismologico/arquivos/eventos/eventos.csv'
+        'arquivos/eventos/eventos.csv'
     )
-    spectro_extract(
-        mseed_dir=args.mseed_dir,
-        spectro_dir=args.spectro_dir,
-        eventos=eventos
-    )
+#    spectro_extract(
+#        mseed_dir=args.mseed_dir,
+#        spectro_dir=args.spectro_dir,
+#        eventos=eventos
+#    )
     discrim(
         model=args.model,
         spectro_dir=args.spectro_dir,
-        output_dir=f'ClassificadorSismologico/files/output/{args.output_dir}',
+        output_dir=args.output_dir,
         eventos=eventos,
-        valid=args.valid
     )
 
     return

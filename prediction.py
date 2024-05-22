@@ -3,6 +3,7 @@
 import numpy as np
 from numpy import moveaxis
 import tensorflow as tf
+from tensorflow.keras.optimizers import Adam
 import pandas as pd
 
 
@@ -21,10 +22,17 @@ def discrim(
 
     try:
         eventos.set_index(['Event', 'Station'], inplace=True)
+        eventos.sort_index(inplace=True)
     except KeyError:
         pass
 
     model = tf.keras.models.load_model(model)
+    optimizer = Adam(learning_rate=0.001)
+    model.compile(
+        optimizer=optimizer,
+        loss='categorical_crossentropy',
+        metrics=['accuracy']
+    )
 
     n_ev = eventos.groupby('Event').size().shape[0]
     print(f'Number of events: {n_ev}')
@@ -41,9 +49,14 @@ def discrim(
             mseed = pick['Path'].values[0].split('/')[-1]
             npy = mseed.replace('.mseed', '.npy')
             spect_path = f'{spectro_dir}/{ev_index}/{npy}'
-            spect_file = [np.array(np.load(spect_path, allow_pickle=True))]
+            try:
+                spectre_file = np.load(spect_path, allow_pickle=True)
+            except FileNotFoundError:
+                print(f'File not found: {spect_path}')
+                continue
+            spect = [np.array(spectre_file)]
 
-            x = moveaxis(spect_file, 1, 3)
+            x = moveaxis(spect, 1, 3)
 
             model_output = model.predict(x).round(3)
             pred_pick = np.argmax(model_output, axis=1)
