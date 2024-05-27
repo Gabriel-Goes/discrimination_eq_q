@@ -9,7 +9,7 @@ from data_process import spectro_extract
 cs = 'ClassificadorSismologico/'
 model = 'fonte/rnc/model/model_2021354T1554.h5'
 mseed = 'arquivos/mseed'
-spectro = 'arquivos/espectro'
+spectro = 'arquivos/espectros'
 output = 'arquivos/resultados'
 
 
@@ -47,16 +47,22 @@ def main(args: argparse.Namespace):
     eventos = pd.read_csv(
         'arquivos/eventos/eventos.csv'
     )
-#    spectro_extract(
-#        mseed_dir=args.mseed_dir,
-#        spectro_dir=args.spectro_dir,
-#        eventos=eventos
-#    )
+    eventos = spectro_extract(
+        mseed_dir=args.mseed_dir,
+        spectro_dir=args.spectro_dir,
+        eventos=eventos
+    )
+
+    eventos_error = eventos.loc[eventos['Error'].apply(len) > 0]
+    eventos_error.to_csv('arquivos/resultados/erros.csv', index=False)
+    eventos_clean = eventos.loc[eventos['Error'].apply(len) == 0]
+    eventos_clean.to_csv('arquivos/resultados/pre_processado.csv', index=False)
+
     discrim(
         model=args.model,
         spectro_dir=args.spectro_dir,
         output_dir=args.output_dir,
-        eventos=eventos,
+        eventos=eventos_clean,
     )
 
     return

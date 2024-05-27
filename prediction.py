@@ -53,6 +53,9 @@ def discrim(
                 spectre_file = np.load(spect_path, allow_pickle=True)
             except FileNotFoundError:
                 print(f'File not found: {spect_path}')
+                eventos.loc[(ev_index, st_index)]['Error'].append(
+                    f'File not found: {spect_path}'
+                )
                 continue
             spect = [np.array(spectre_file)]
 
@@ -80,7 +83,11 @@ def discrim(
                 (float(k) / sum(pred_total)).round(3) for k in pred_total
             ]
         except ZeroDivisionError:
-            print(f'Erro Evento: {ev_index}')
+            eventos.loc[(ev_index, st_index)]['Error'].append(
+                f'ZeroDivisionError {pred_total}'
+            )
+            print(f'Erro Evento: {ev_index} {pred_total}')
+            continue
 
         pred_event = np.argmax(pred_total)
 

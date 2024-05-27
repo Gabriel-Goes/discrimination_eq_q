@@ -1,50 +1,16 @@
 # coding: utf-8
 
-import glob
 import os
 
 import matplotlib.mlab as mlab
 import numpy as np
+import pandas as pd
 
 import obspy as op
 from obspy.signal.invsim import cosine_taper
 
-import pandas as pd
-
 
 def stride_windows(x, n, noverlap=None, axis=0):
-    '''
-    Get all windows of x with length n as a single array,
-    using strides to avoid data duplication.
-
-    .. warning::
-
-        It is not safe to write to the output array.  Multiple
-        elements may point to the same piece of memory,
-        so modifying one value may change others.
-
-    Parameters
-    ----------
-    x : 1D array or sequence
-        Array or sequence containing the data.
-
-    n : integer
-        The number of data points in each window.
-
-    noverlap : integer
-        The overlap between adjacent windows.
-        Default is 0 (no overlap)
-
-    axis : integer
-        The axis along which the windows will run.
-
-    References
-    ----------
-    `stackoverflow: Rolling window for 1D arrays in Numpy?
-    <http://stackoverflow.com/a/6811241>`_
-    `stackoverflow: Using strides for an efficient moving average filter
-    <http://stackoverflow.com/a/4947453>`_
-    '''
     if noverlap is None:
         noverlap = 0
 
@@ -146,39 +112,45 @@ def spectro_extract(
     """
     WINDOW_LENGTH = 1
     OVERLAP = (1 - 0.75)
+    eventos['Compo'] = [[] for _ in range(len(eventos))]
+    eventos['Error'] = [[] for _ in range(len(eventos))]
+    eventos.reset_index(inplace=True)
+    eventos.set_index(['Event', 'Station'], inplace=True)
+    eventos.sort_index(inplace=True)
 
-    # eventos.set_index(['Event', 'Station'], inplace=True)
     n_ev = eventos.groupby(level=0).size().shape[0]
     print(f'Number of events: {n_ev}')
 
-    for i, (index, evento) in enumerate(eventos.groupby(level=0), start=1):
+    for i, (ev_index, evento) in enumerate(eventos.groupby(level=0), start=1):
         print('*****************')
-        print(f'EVENT: {index} ({i} / {n_ev})')
+        print(f'EVENT: {ev_index} ({i} / {n_ev})')
+        print(f' - Number of picks: {evento.shape[0]}')
 
-        os.makedirs(f'{spectro_dir}/{index}', exist_ok=True)
-        list_stream = glob.glob(f'{mseed_dir}/{index}/*')
-
-        print(f'Number of streams: {len(list_stream)}')
-        nb_st = 0
-        for stream in list_stream:
-            nb_st += 1
-
-            print(f'Stream {nb_st} / {len(list_stream)}', end="\r")
-            st = op.read(stream, dtype=float)
-            stream_name = (stream.split('/')[-1]).split('.mseed')[0]
+        for j, (pk_index, pick) in enumerate(evento.groupby(level=1), start=1):
+            print(f'PICK: {pk_index} ({j} / {evento.shape[0]})')
+            p_path = pick.Path.values[0]
+            st = op.read(p_path, dtype=float)
+            stream_name = (p_path.split('/')[-1]).split('.mseed')[0]
 
             st.detrend('demean')
             st.taper(0.05)
             st = st.filter('highpass', freq=2, corners=4, zerophase=True)
             if st[0].stats.sampling_rate == 200:
+                eventos.at[(ev_index, pk_index)]['Error'].values[0].append(
+                    'Decimated 2x'
+                )
                 st.decimate(2)
+                print(' - Warning! Decimated 2x')
 
-            compo = []
+            compo = [tr.stats.component for tr in st]
+            print(f' - Componestes: {compo}')
 
-            for tr in st:
-                compo.append(tr.stats.component)
-                if len(compo) != 3:
-                    continue
+            if len(compo) != 3:
+                err = f' - Error! len(compo) != 3 ({compo})'
+                eventos.at[(ev_index, pk_index)]['Error'].values[0].append(err)
+                print(err)
+                continue
+
             spectro = []
             find = False
             for c in compo:
@@ -209,9 +181,21 @@ def spectro_extract(
                     fft_list /= fft_list.max()
                     spectro.append(fft_list)
                     find = True
+                else:
+                    err = f'fft_list.shape != (237,50) ({fft_list.shape})'
+                    eventos.at[(ev_index, pk_index)]['Error'].values[0].append(
+                        err
+                    )
+                    print(f' - Error! {err}')
 
             if find is True and len(spectro) == 3:
                 spectro = np.array(spectro)
-                np.save(f'{spectro_dir}/{index}/{stream_name}.npy', spectro)
+                os.makedirs(f'{spectro_dir}/{ev_index}', exist_ok=True)
+                np.save(f'{spectro_dir}/{ev_index}/{stream_name}.npy', spectro)
+                eventos.at[(ev_index, pk_index)]['Compo'].values[0] = compo
             else:
-                print(f'Error: {stream_name}')
+                err = f'find is {find} and len(spectro) == {len(spectro)}'
+                eventos.at[(ev_index, pk_index)]['Error'].values[0].append(err)
+                print(f' - Error! {err}')
+
+    return eventos
