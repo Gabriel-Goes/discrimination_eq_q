@@ -56,7 +56,8 @@ def main(args: argparse.Namespace):
     eventos_error = eventos.loc[eventos['Error'].apply(len) > 0]
     eventos_error.to_csv('arquivos/resultados/erros.csv', index=False)
     eventos_clean = eventos.loc[eventos['Error'].apply(len) == 0]
-    eventos_clean.to_csv('arquivos/resultados/pre_processado.csv', index=False)
+    eventos_clean.to_csv('arquivos/resultados/pre_processado.csv')
+    eventos_clean = pd.read_csv('arquivos/resultados/pre_processado.csv')
 
     discrim(
         model=args.model,
