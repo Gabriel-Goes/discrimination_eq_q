@@ -129,15 +129,15 @@ def spectro_extract(
         for j, (pk_index, pick) in enumerate(evento.groupby(level=1), start=1):
             print(f'PICK: {pk_index} ({j} / {evento.shape[0]})')
             p_path = pick.Path.values[0]
-            st = op.read(p_path, dtype=float)
+            st = op.read(f'arquivos/mseed/{p_path}', dtype=float)
             stream_name = (p_path.split('/')[-1]).split('.mseed')[0]
 
             st.detrend('demean')
             st.taper(0.05)
             st = st.filter('highpass', freq=2, corners=4, zerophase=True)
             if st[0].stats.sampling_rate == 200:
-                eventos.at[(ev_index, pk_index)]['Error'].values[0].append(
-                    'Decimated 2x'
+                eventos.loc[(ev_index, pk_index)]['Error'].append(
+                    f' Sampling rage is {st[0].stats.sampling_rate}'
                 )
                 st.decimate(2)
                 print(' - Warning! Decimated 2x')
@@ -147,7 +147,7 @@ def spectro_extract(
 
             if len(compo) != 3:
                 err = f' - Error! len(compo) != 3 ({compo})'
-                eventos.at[(ev_index, pk_index)]['Error'].values[0].append(err)
+                eventos.loc[(ev_index, pk_index)]['Error'].append(err)
                 print(err)
                 continue
 
@@ -183,7 +183,7 @@ def spectro_extract(
                     find = True
                 else:
                     err = f'fft_list.shape != (237,50) ({fft_list.shape})'
-                    eventos.at[(ev_index, pk_index)]['Error'].values[0].append(
+                    eventos.loc[(ev_index, pk_index)]['Error'].append(
                         err
                     )
                     print(f' - Error! {err}')
@@ -192,10 +192,10 @@ def spectro_extract(
                 spectro = np.array(spectro)
                 os.makedirs(f'{spectro_dir}/{ev_index}', exist_ok=True)
                 np.save(f'{spectro_dir}/{ev_index}/{stream_name}.npy', spectro)
-                eventos.at[(ev_index, pk_index)]['Compo'].values[0] = compo
+                eventos.loc[(ev_index, pk_index)]['Compo'].append(compo)
             else:
                 err = f'find is {find} and len(spectro) == {len(spectro)}'
-                eventos.at[(ev_index, pk_index)]['Error'].values[0].append(err)
+                eventos.loc[(ev_index, pk_index)]['Error'].append(err)
                 print(f' - Error! {err}')
 
     return eventos
