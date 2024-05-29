@@ -114,6 +114,7 @@ def spectro_extract(
     OVERLAP = (1 - 0.75)
     eventos['Compo'] = [[] for _ in range(len(eventos))]
     eventos['Error'] = [[] for _ in range(len(eventos))]
+    eventos['Warning'] = [[] for _ in range(len(eventos))]
     eventos.reset_index(inplace=True)
     eventos.set_index(['Event', 'Station'], inplace=True)
     eventos.sort_index(inplace=True)
@@ -136,8 +137,8 @@ def spectro_extract(
             st.taper(0.05)
             st = st.filter('highpass', freq=2, corners=4, zerophase=True)
             if st[0].stats.sampling_rate == 200:
-                eventos.loc[(ev_index, pk_index)]['Error'].append(
-                    f' Sampling rage is {st[0].stats.sampling_rate}'
+                eventos.loc[(ev_index, pk_index)]['Warning'].append(
+                    f' Sampling rate is {st[0].stats.sampling_rate}'
                 )
                 st.decimate(2)
                 print(' - Warning! Decimated 2x')
