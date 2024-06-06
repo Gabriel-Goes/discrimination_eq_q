@@ -14,9 +14,7 @@ output = 'arquivos/resultados'
 
 
 def read_args() -> argparse.Namespace:
-
     parser = argparse.ArgumentParser()
-
     parser.add_argument('--model',
                         type=str, default=model,
                         help="Model file path.")
@@ -65,7 +63,6 @@ def main(args: argparse.Namespace):
         output_dir=args.output_dir,
         eventos=eventos_clean,
     )
-
     return
 
 
