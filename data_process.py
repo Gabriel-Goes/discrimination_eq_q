@@ -137,8 +137,10 @@ def spectro_extract(
             st.taper(0.05)
             st = st.filter('highpass', freq=2, corners=4, zerophase=True)
             if st[0].stats.sampling_rate == 200:
-                eventos.loc[(ev_index, pk_index)]['Warning'].append(
-                    f' Sampling rate is {st[0].stats.sampling_rate}'
+                eventos.loc[(
+                    ev_index, pk_index
+                    ), 'Warning'].loc[ev_index, pk_index].append(
+                        f' Sampling rate is {st[0].stats.sampling_rate}'
                 )
                 st.decimate(2)
                 print(' - Warning! Decimated 2x')
@@ -148,7 +150,7 @@ def spectro_extract(
 
             if len(compo) != 3:
                 err = f' - Error! len(compo) != 3 ({compo})'
-                eventos.loc[(ev_index, pk_index)]['Error'].append(err)
+                eventos.loc[(ev_index, pk_index), 'Error'].loc[ev_index, pk_index].append(err)
                 print(err)
                 continue
 
@@ -184,19 +186,17 @@ def spectro_extract(
                     find = True
                 else:
                     err = f'fft_list.shape != (237,50) ({fft_list.shape})'
-                    eventos.loc[(ev_index, pk_index)]['Error'].append(
-                        err
-                    )
+                    eventos.loc[(ev_index, pk_index), 'Error'].loc[ev_index, pk_index].append(err)
                     print(f' - Error! {err}')
 
             if find is True and len(spectro) == 3:
                 spectro = np.array(spectro)
                 os.makedirs(f'{spectro_dir}/{ev_index}', exist_ok=True)
                 np.save(f'{spectro_dir}/{ev_index}/{stream_name}.npy', spectro)
-                eventos.loc[(ev_index, pk_index)]['Compo'].append(compo)
+                eventos.loc[(ev_index, pk_index), 'Compo'].loc[ev_index, pk_index] = compo
             else:
                 err = f'find is {find} and len(spectro) == {len(spectro)}'
-                eventos.loc[(ev_index, pk_index)]['Error'].append(err)
+                eventos.loc[(ev_index, pk_index), 'Error'].loc[ev_index, pk_index].append(err)
                 print(f' - Error! {err}')
 
     return eventos
