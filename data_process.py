@@ -129,6 +129,11 @@ def spectro_extract(
 
         for j, (pk_index, pick) in enumerate(evento.groupby(level=1), start=1):
             print(f'PICK: {pk_index} ({j} / {evento.shape[0]})')
+            if pick.shape[0] != 1:
+                err = f' - Error! pick.shape[0] != 1 ({pick.shape[0]})'
+                eventos.loc[(ev_index, pk_index), 'Error'] = err
+                print(err)
+                continue
             p_path = pick.Path.values[0]
             st = op.read(f'arquivos/mseed/{p_path}', dtype=float)
             stream_name = (p_path.split('/')[-1]).split('.mseed')[0]
