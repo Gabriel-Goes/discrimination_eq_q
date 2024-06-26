@@ -1,19 +1,27 @@
+# #!/home/ipt/.pyenv/versions/sismologia/bin/python
 # coding: utf-8
+# Author: Gabriel Góes Rocha de Lima
+# CoAuthor: Lucas Schirbel
+# Date: 2021-07-01
+# Version: 0.1.0
 
+# Description: This script contains the functions used to process the data
+
+# ---------------------------- IMPORT LIBRARIES ----------------------------- #
 import os
-
 import matplotlib.mlab as mlab
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 
 import obspy as op
 from obspy.signal.invsim import cosine_taper
-from obspy.core import read
 from obspy.signal.trigger import classic_sta_lta
-from obspy.signal.trigger import plot_trigger
+# import matplotlib.pyplot as plt
+# from obspy.core import read
+# from obspy.signal.trigger import plot_trigger
 
 
+# ---------------------------- FUNCTION DEFINITIONS ------------------------- #
 def stride_windows(x, n, noverlap=None, axis=0):
     if noverlap is None:
         noverlap = 0
@@ -51,16 +59,6 @@ def stride_windows(x, n, noverlap=None, axis=0):
 
 
 def fft_taper(data: np.ndarray) -> np.ndarray:
-    """
-    Cosine taper for computation of FFT.
-
-    :type data: numpy.ndarray().
-    :param data: Input data. Vector that contains the amplitude of a seismic
-        trace.
-
-    :return: The tapered data window.
-    """
-
     return data * cosine_taper(npts=data.size, p=0.2)
 
 
@@ -69,17 +67,6 @@ def get_fft(
         WINDOW_LENGTH: int,
         OVERLAP: float,
         nb_pts: int) -> tuple:
-    """
-    Compute the Fourier Transform of a seismic trace.
-    :param trace: obspy.Trace() object that contains the seismogram to be
-        analyzed.
-    :param WINDOW_LENGTH: Length (in second) of the sliding windows.
-    :param OVERLAP: Percentage of overlap between each shift.
-    :param np_pts: Number of points in a window (sampling_rate *
-        WINDOWS_LENGTH)
-    :return: 2 numpy.ndarray that contains the frequency vector and the
-        amplitude spectrum of the input signal.
-    """
     s_rate = trace.stats.sampling_rate
     nb_pts = int(WINDOW_LENGTH * s_rate)
     nb_overlap = int(OVERLAP * nb_pts)
@@ -117,18 +104,6 @@ def spectro_extract(
         mseed_dir: str,
         spectro_dir: str,
         eventos: pd.DataFrame) -> None:
-    """
-        Compute the spectrograms that will be used for the validation.
-        The matrices are saved as NumPy objects.
-
-        :type mseed_dir: str
-        :param mseed_dir: Absolute path to the input MSEED signal.
-        :type spectro_dir: str
-        :param spectro_dir: Absolute path where to save the output
-            spectrograms.
-        :type events_list: list
-        :events_list: List of all the labelled events to validate.
-    """
     WINDOW_LENGTH = 1
     OVERLAP = (1 - 0.75)
     eventos['Compo'] = [[] for _ in range(len(eventos))]
