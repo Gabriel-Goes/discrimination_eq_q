@@ -5,9 +5,13 @@ import os
 import matplotlib.mlab as mlab
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 import obspy as op
 from obspy.signal.invsim import cosine_taper
+from obspy.core import read
+from obspy.signal.trigger import classic_sta_lta
+from obspy.signal.trigger import plot_trigger
 
 
 def stride_windows(x, n, noverlap=None, axis=0):
@@ -94,6 +98,21 @@ def get_fft(
     return result, freqs
 
 
+def cft_max(stream):
+    st = stream.copy()
+    cft_list = []
+    # calculate sta/lta classic
+    for tr in st:
+        cft = classic_sta_lta(
+            tr.data,
+            int(2 * tr.stats.sampling_rate),
+            int(10 * tr.stats.sampling_rate)
+        )
+        cft_list.append(cft)
+
+    return cft_list
+
+
 def spectro_extract(
         mseed_dir: str,
         spectro_dir: str,
@@ -157,6 +176,13 @@ def spectro_extract(
                 err = f' - Error! len(compo) != 3 ({compo})'
                 eventos.loc[(ev_index, pk_index), 'Error'].loc[ev_index, pk_index].append(err)
                 print(err)
+                continue
+
+            if cft_max(st) < 2:
+                eventos.loc[(ev_index, pk_index), 'Warning'].loc[ev_index, pk_index].append(
+                    ' - Warning! Signal is too noisy'
+                )
+                print(' - Warning! Signal is too noisy')
                 continue
 
             spectro = []
