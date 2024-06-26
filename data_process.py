@@ -85,19 +85,30 @@ def get_fft(
     return result, freqs
 
 
-def cft_max(stream):
+def calculate_cft(stream):
     st = stream.copy()
-    cft_list = []
-    # calculate sta/lta classic
+    cft_array = np.array([])
     for tr in st:
         cft = classic_sta_lta(
             tr.data,
             int(2 * tr.stats.sampling_rate),
             int(10 * tr.stats.sampling_rate)
         )
-        cft_list.append(cft)
+        cft_array = np.append(cft_array, cft)
+    cft_array = cft_array.reshape(3, 6001)
 
-    return cft_list
+    return cft_array
+
+
+def cft_max(
+            cft_array: np.ndarray,
+            n: float = 1.7
+        ):
+    for cft in cft_array:
+        if cft.max() > n:
+            return cft.max()
+
+    return None
 
 
 def spectro_extract(
@@ -130,8 +141,6 @@ def spectro_extract(
                 continue
             p_path = pick.Path.values[0]
             st = op.read(f'arquivos/mseed/{p_path}', dtype=float)
-            stream_name = (p_path.split('/')[-1]).split('.mseed')[0]
-
             st.detrend('demean')
             st.taper(0.05)
             st = st.filter('highpass', freq=2, corners=4, zerophase=True)
@@ -145,19 +154,17 @@ def spectro_extract(
                 print(' - Warning! Decimated 2x')
 
             compo = [tr.stats.component for tr in st]
+            cft_array = calculate_cft(st)
+            cft_m = cft_max(cft_array)
             print(f' - Componestes: {compo}')
 
-            if len(compo) != 3:
+            if len(compo) != 3 or cft_m is None:
                 err = f' - Error! len(compo) != 3 ({compo})'
-                eventos.loc[(ev_index, pk_index), 'Error'].loc[ev_index, pk_index].append(err)
+                eventos.loc[
+                    (ev_index, pk_index),
+                    'Error'
+                ].loc[ev_index, pk_index].append(err)
                 print(err)
-                continue
-
-            if cft_max(st) < 2:
-                eventos.loc[(ev_index, pk_index), 'Warning'].loc[ev_index, pk_index].append(
-                    ' - Warning! Signal is too noisy'
-                )
-                print(' - Warning! Signal is too noisy')
                 continue
 
             spectro = []
@@ -198,6 +205,7 @@ def spectro_extract(
             if find is True and len(spectro) == 3:
                 spectro = np.array(spectro)
                 os.makedirs(f'{spectro_dir}/{ev_index}', exist_ok=True)
+                stream_name = (p_path.split('/')[-1]).split('.mseed')[0]
                 np.save(f'{spectro_dir}/{ev_index}/{stream_name}.npy', spectro)
                 eventos.loc[(ev_index, pk_index), 'Compo'].loc[ev_index, pk_index] = compo
             else:
